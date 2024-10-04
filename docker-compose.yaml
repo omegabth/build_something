@@ -1,0 +1,38 @@
+version: '3'
+
+services:
+  front-end:
+    container_name: frontend
+    image: omegabth/big-data-frontend
+    ports:
+      - "5000:5000"
+    depends_on:
+      - backend
+    labels:
+      kompose.service.type: LoadBalancer
+
+  backend:
+    container_name: backend
+    image: omegabth/big-data-api
+    ports:
+      - "5001:5001"
+    depends_on:
+      - db
+
+  db:
+    container_name: database
+    image: omegabth/big-data-db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: microservices_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    labels:
+      kompose.volume.size: 1Gi
+      kompose.volume.type: persistentVolumeClaim
+      
+volumes:
+  db-data:
